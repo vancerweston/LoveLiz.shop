@@ -7,29 +7,43 @@ class App extends Component {
     super(props);
 
     this.state = { 
-      _id: "",
-      a: ""
-   }
-  }
-    callAPI() {
-      fetch(API_BASE_URL)
-        .then( res => res.text())
-        .then(res => this.setState({apiResponse: res}))
-        .catch(err => err);
-      }
+      items: [],
+      isLoaded: false
+     }
+   
+    }
 
-    componentWillMount() {
-      this.callAPI();
+    componentDidMount() {
+      fetch(API_BASE_URL)
+      .then( res => res.json())
+      .then(json => {
+        this.setState({ 
+          isLoaded: true,
+          items: json
+         })
+      })
+      .catch(err => err);
     }
 
   render() {
-    return (
-      <div className='App'>
-        <div>
-          <h1>{this.state.apiResponse}</h1>
+
+    let { isLoaded, items } = this.state;
+
+    if(!isLoaded) {
+      return <div>Products Loading...</div>;
+    } else {
+      return (
+        <div className='App'>
+          <ul>
+            {items.map(item => (
+              <li key={item._id}>
+                {item.a}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-    )
+      )
+    }
   }
 }
 
